@@ -115,27 +115,27 @@ public class Moncky2Interpreter {
             return register[registerNumber];
         }
 
-        int firstRegisterNumber;
-        int secondRegisterNumber;
+            int firstRegisterNumber;
+            int secondRegisterNumber;
 
-        //check if register number is 1 or 2 digit (0-15)
-        if (commandParts[1].length() == 4)
-            firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 3));
-        else firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 2));
+            //check if register number is 1 or 2 digit (0-15)
+            if (commandParts[1].length() == 4)
+                firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 3));
+            else firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 2));
 
-        //check if register number is 1 or 2 digit (0-15)
-        if (commandParts[2].length() == 3)
-            secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 3));
-        else secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 2));
+            //check if register number is 1 or 2 digit (0-15)
+            if (commandParts[2].length() == 3)
+                secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 3));
+            else secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 2));
 
-        if (commandParts[0].equalsIgnoreCase("nop")) {
-            //stupid command that does nothing
+            if (commandParts[0].equalsIgnoreCase("nop")) {
+                //stupid command that does nothing
 
-            //add the command to compiler
-            compiledBinaryCommands.add("01000000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+                //add the command to compiler
+                compiledBinaryCommands.add("01000000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
-            return 0;
-        }
+                return 0;
+            }
         if (commandParts[0].equalsIgnoreCase("or")) {
             //set reg1 to 1 if either register is true
             if (register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) register[firstRegisterNumber] = (short) 1;
@@ -167,7 +167,7 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("add")) {
-            //subtract the 2 register values and store them in the first register
+            //add the 2 register values and store them in the first register
             register[firstRegisterNumber] = (short) (register[firstRegisterNumber] + register[secondRegisterNumber]);
 
             //add the command to compiler
@@ -185,18 +185,51 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("shl")) {
+            //subtract the 2 register values and store them in the first register
+            register[firstRegisterNumber] = (short) (register[firstRegisterNumber] - register[secondRegisterNumber]);
+
+            //add the command to compiler
+            compiledBinaryCommands.add("01000110" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("shr")) {
+            //subtract the 2 register values and store them in the first register
+            register[firstRegisterNumber] = (short) (register[firstRegisterNumber] / Math.pow(2, register[secondRegisterNumber]) );
+
+            //add the command to compiler
+            compiledBinaryCommands.add("01000111" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("ashr")) {
+            //TODO
+            //arithmetic shift right
+            register[firstRegisterNumber] = 0;
+
+            //add the command to compiler
+            compiledBinaryCommands.add("01001001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("not")) {
+            //TODO
+            //1-complement
+            register[firstRegisterNumber] = 0;
+
+            //add the command to compiler
+            compiledBinaryCommands.add("01001001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("neg")) {
+            //TODO
+            //2-complement
+            register[firstRegisterNumber] = 0;
+
+            //add the command to compiler
+            compiledBinaryCommands.add("01001010" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+
             return 0;
         }
 
