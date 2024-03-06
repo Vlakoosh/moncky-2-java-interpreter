@@ -213,9 +213,16 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("not")) {
-            //TODO not
             //1-complement
-            register[firstRegisterNumber] = 0;
+            String bitValue = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
+            String reverseBitValue = "";
+            //reverse the bit value of bitValue
+            for (int i = 0; i < bitValue.length(); i++){
+                if (bitValue.charAt(i) == '0') reverseBitValue = reverseBitValue + "1";
+                else reverseBitValue = reverseBitValue + "0";
+            }
+
+            register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(reverseBitValue);
 
             //add the command to compiler
             compiledBinaryCommands.add("01001001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));

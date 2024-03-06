@@ -13,6 +13,10 @@ public class NumberConverter {
         return binaryString.substring(binaryString.length() - (len));
     }
 
+    public static int binaryStringToDecimal(String binaryString) {
+        return Integer.parseInt(binaryString, 2);
+    }
+
     public static void main(String[] args) {
         System.out.println(decimalToBinaryString(16, 8));
         System.out.println(decimalToBinaryString(500, 8));
