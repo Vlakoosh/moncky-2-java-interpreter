@@ -1,3 +1,7 @@
 li r12, 126
-st r3, r12
+li r1, 28
+li r3, 26
+st r12, (r1)
+ld r2, (r12)
+sub r12, r3
 halt

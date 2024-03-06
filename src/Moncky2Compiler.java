@@ -1,8 +1,11 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class Moncky2Compiler {
+
+    private ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
 
     public static void main(String[] args) {
         String codeContent;
@@ -17,5 +20,7 @@ public class Moncky2Compiler {
 
         Moncky2Interpreter m2i = new Moncky2Interpreter(codeContent);
         m2i.printCompiledBinaryCommands();
+
+        m2i.printCPU();
     }
 }
