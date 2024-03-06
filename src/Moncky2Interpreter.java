@@ -203,7 +203,7 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("ashr")) {
-            //TODO
+            //TODO ashr
             //arithmetic shift right
             register[firstRegisterNumber] = 0;
 
@@ -213,7 +213,7 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("not")) {
-            //TODO
+            //TODO not
             //1-complement
             register[firstRegisterNumber] = 0;
 
@@ -223,7 +223,7 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equalsIgnoreCase("neg")) {
-            //TODO
+            //TODO neg
             //2-complement
             register[firstRegisterNumber] = 0;
 
