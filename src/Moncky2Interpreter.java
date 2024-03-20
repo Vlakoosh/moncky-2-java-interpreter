@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Moncky2Interpreter {
@@ -6,7 +9,24 @@ public class Moncky2Interpreter {
     private short[] memory = new short[65536];
     public ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
 
-    public Moncky2Interpreter(String moncky2Code) {
+
+    public static void main(String[] args) {
+        String codeContent;
+        try {
+            Path filePath = Path.of("moncky2in/code.txt");
+            codeContent = Files.readString(filePath);
+        }
+        catch (IOException e) {
+            System.out.println("no code file in moncky2in directory (code.txt)");
+            throw new RuntimeException(e);
+        }
+
+        Moncky2Interpreter m2i = new Moncky2Interpreter();
+        m2i.interpretCode(codeContent);
+        m2i.printCPU();
+    }
+
+    public void interpretCode(String moncky2Code) {
         String[] commands = moncky2Code.split("\n");
 
         int commandLine = 0;
@@ -16,6 +36,10 @@ public class Moncky2Interpreter {
             if (commandResult > 0) commandLine = commandResult;
             commandLine++;
         }
+    }
+
+    public ArrayList<String> getCompiledBinaryCommands() {
+        return compiledBinaryCommands;
     }
 
     public void printCPU() {
@@ -115,27 +139,29 @@ public class Moncky2Interpreter {
             return register[registerNumber];
         }
 
-            int firstRegisterNumber;
-            int secondRegisterNumber;
+        //SETUP FOR ALU OPERATIONS
+        int firstRegisterNumber;
+        int secondRegisterNumber;
 
-            //check if register number is 1 or 2 digit (0-15)
-            if (commandParts[1].length() == 4)
-                firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 3));
-            else firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 2));
+        //check if register number is 1 or 2 digit (0-15)
+        if (commandParts[1].length() == 4)
+            firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 3));
+        else firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 2));
 
-            //check if register number is 1 or 2 digit (0-15)
-            if (commandParts[2].length() == 3)
-                secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 3));
-            else secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 2));
+        //check if register number is 1 or 2 digit (0-15)
+        if (commandParts[2].length() == 3)
+            secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 3));
+        else secondRegisterNumber = Integer.parseInt(commandParts[2].substring(1, 2));
 
-            if (commandParts[0].equalsIgnoreCase("nop")) {
-                //stupid command that does nothing
+        //ALU OPERATIONS
+        if (commandParts[0].equalsIgnoreCase("nop")) {
+            //stupid command that does nothing
 
-                //add the command to compiler
-                compiledBinaryCommands.add("01000000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
+            //add the command to compiler
+            compiledBinaryCommands.add("01000000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
-                return 0;
-            }
+            return 0;
+        }
         if (commandParts[0].equalsIgnoreCase("or")) {
             //set reg1 to 1 if either register is true
             if (register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) register[firstRegisterNumber] = (short) 1;
@@ -184,24 +210,27 @@ public class Moncky2Interpreter {
 
             return 0;
         }
+        //TODO fix. wrong operation. NEEDS A MASK
         if (commandParts[0].equalsIgnoreCase("shl")) {
             //subtract the 2 register values and store them in the first register
-            register[firstRegisterNumber] = (short) (register[firstRegisterNumber] - register[secondRegisterNumber]);
+            register[firstRegisterNumber] = 0;
 
             //add the command to compiler
             compiledBinaryCommands.add("01000110" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
             return 0;
         }
+        //TODO fix. wrong operation. NEEDS A MASK
         if (commandParts[0].equalsIgnoreCase("shr")) {
             //subtract the 2 register values and store them in the first register
-            register[firstRegisterNumber] = (short) (register[firstRegisterNumber] / Math.pow(2, register[secondRegisterNumber]) );
+            register[firstRegisterNumber] = 0;
 
             //add the command to compiler
             compiledBinaryCommands.add("01000111" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
             return 0;
         }
+        //TODO fix. wrong operation. NEEDS A MASK and KEEP SIGN BIT
         if (commandParts[0].equalsIgnoreCase("ashr")) {
             //TODO ashr
             //arithmetic shift right
