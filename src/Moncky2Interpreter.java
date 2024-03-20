@@ -212,8 +212,14 @@ public class Moncky2Interpreter {
         }
         //TODO fix. wrong operation. NEEDS A MASK
         if (commandParts[0].equalsIgnoreCase("shl")) {
-            //subtract the 2 register values and store them in the first register
-            register[firstRegisterNumber] = 0;
+            //shift all bits left by a specified number of bits
+            //the right-most (low-order) bit is turned into a 0
+            //the left-most (high-order) bit is discarded
+            for (int i = 0; i < register[secondRegisterNumber]; i++){
+                String binary = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
+                binary = binary.substring(1) + "0";
+                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+            }
 
             //add the command to compiler
             compiledBinaryCommands.add("01000110" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -222,8 +228,14 @@ public class Moncky2Interpreter {
         }
         //TODO fix. wrong operation. NEEDS A MASK
         if (commandParts[0].equalsIgnoreCase("shr")) {
-            //subtract the 2 register values and store them in the first register
-            register[firstRegisterNumber] = 0;
+            //shift all bits right by a specified number of bits
+            //the right-most (low-order) bit is discarded
+            //the left-most (high-order) bit is turned into a 0
+            for (int i = 0; i < register[secondRegisterNumber]; i++){
+                String binary = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
+                binary = "0" + binary.substring(0, binary.length()-1);
+                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+            }
 
             //add the command to compiler
             compiledBinaryCommands.add("01000111" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
