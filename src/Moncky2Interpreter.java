@@ -210,7 +210,6 @@ public class Moncky2Interpreter {
 
             return 0;
         }
-        //TODO fix. wrong operation. NEEDS A MASK
         if (commandParts[0].equalsIgnoreCase("shl")) {
             //shift all bits left by a specified number of bits
             //the right-most (low-order) bit is turned into a 0
@@ -226,7 +225,6 @@ public class Moncky2Interpreter {
 
             return 0;
         }
-        //TODO fix. wrong operation. NEEDS A MASK
         if (commandParts[0].equalsIgnoreCase("shr")) {
             //shift all bits right by a specified number of bits
             //the right-most (low-order) bit is discarded
@@ -242,11 +240,15 @@ public class Moncky2Interpreter {
 
             return 0;
         }
-        //TODO fix. wrong operation. NEEDS A MASK and KEEP SIGN BIT
         if (commandParts[0].equalsIgnoreCase("ashr")) {
-            //TODO ashr
-            //arithmetic shift right
-            register[firstRegisterNumber] = 0;
+            //shift all bits right by a specified number of bits (and keep the sign bit)
+            //the right-most (low-order) bit is discarded
+            //the left-most (high-order) bit is copied
+            for (int i = 0; i < register[secondRegisterNumber]; i++){
+                String binary = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
+                binary = binary.charAt(0) + binary.substring(0, binary.length()-1);
+                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+            }
 
             //add the command to compiler
             compiledBinaryCommands.add("01001001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
