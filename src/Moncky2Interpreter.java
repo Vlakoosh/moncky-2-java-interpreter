@@ -7,6 +7,7 @@ public class Moncky2Interpreter {
 
     private short[] register = new short[16];
     private short[] memory = new short[65536];
+    private short ALU = 0;
     public ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
 
 
@@ -139,6 +140,8 @@ public class Moncky2Interpreter {
             return register[registerNumber];
         }
 
+
+
         //SETUP FOR ALU OPERATIONS
         int firstRegisterNumber;
         int secondRegisterNumber;
@@ -157,6 +160,9 @@ public class Moncky2Interpreter {
         if (commandParts[0].equalsIgnoreCase("nop")) {
             //stupid command that does nothing
 
+            //save ALU result
+            ALU = 0;
+
             //add the command to compiler
             compiledBinaryCommands.add("01000000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
@@ -166,6 +172,9 @@ public class Moncky2Interpreter {
             //set reg1 to 1 if either register is true
             if (register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) register[firstRegisterNumber] = (short) 1;
             else register[firstRegisterNumber] = (short) 0;
+
+            //save ALU result
+            ALU = register[firstRegisterNumber];
 
             //add the command to compiler
             compiledBinaryCommands.add("01000001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -177,6 +186,9 @@ public class Moncky2Interpreter {
             if (register[firstRegisterNumber] == 1 && register[secondRegisterNumber] == 1) register[firstRegisterNumber] = (short) 1;
             else register[firstRegisterNumber] = (short) 0;
 
+            //save ALU result
+            ALU = register[firstRegisterNumber];
+
             //add the command to compiler
             compiledBinaryCommands.add("010000010" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
@@ -187,6 +199,9 @@ public class Moncky2Interpreter {
             if ((register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) && register[firstRegisterNumber] != register[secondRegisterNumber]) register[firstRegisterNumber] = (short) 1;
             else register[firstRegisterNumber] = (short) 0;
 
+            //save ALU result
+            ALU = register[firstRegisterNumber];
+
             //add the command to compiler
             compiledBinaryCommands.add("01000011" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
@@ -194,7 +209,8 @@ public class Moncky2Interpreter {
         }
         if (commandParts[0].equalsIgnoreCase("add")) {
             //add the 2 register values and store them in the first register
-            register[firstRegisterNumber] = (short) (register[firstRegisterNumber] + register[secondRegisterNumber]);
+            ALU = (short) (register[firstRegisterNumber] + register[secondRegisterNumber]);
+            register[firstRegisterNumber] = ALU;
 
             //add the command to compiler
             compiledBinaryCommands.add("01000100" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -203,7 +219,8 @@ public class Moncky2Interpreter {
         }
         if (commandParts[0].equalsIgnoreCase("sub")) {
             //subtract the 2 register values and store them in the first register
-            register[firstRegisterNumber] = (short) (register[firstRegisterNumber] - register[secondRegisterNumber]);
+            ALU = (short) (register[firstRegisterNumber] - register[secondRegisterNumber]);
+            register[firstRegisterNumber] = ALU;
 
             //add the command to compiler
             compiledBinaryCommands.add("01000101" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -217,7 +234,8 @@ public class Moncky2Interpreter {
             for (int i = 0; i < register[secondRegisterNumber]; i++){
                 String binary = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
                 binary = binary.substring(1) + "0";
-                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+                ALU = (short) NumberConverter.binaryStringToDecimal(binary);
+                register[firstRegisterNumber] = ALU;
             }
 
             //add the command to compiler
@@ -232,7 +250,8 @@ public class Moncky2Interpreter {
             for (int i = 0; i < register[secondRegisterNumber]; i++){
                 String binary = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
                 binary = "0" + binary.substring(0, binary.length()-1);
-                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+                ALU = (short) NumberConverter.binaryStringToDecimal(binary);
+                register[firstRegisterNumber] = ALU;
             }
 
             //add the command to compiler
@@ -247,7 +266,8 @@ public class Moncky2Interpreter {
             for (int i = 0; i < register[secondRegisterNumber]; i++){
                 String binary = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
                 binary = binary.charAt(0) + binary.substring(0, binary.length()-1);
-                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+                ALU = register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(binary);
+                register[firstRegisterNumber] = ALU;
             }
 
             //add the command to compiler
@@ -255,6 +275,7 @@ public class Moncky2Interpreter {
 
             return 0;
         }
+        //TODO: check if this is right as I am *NOT* sure
         if (commandParts[0].equalsIgnoreCase("not")) {
             //1-complement
             String bitValue = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
@@ -272,8 +293,9 @@ public class Moncky2Interpreter {
 
             return 0;
         }
+        //TODO neg
         if (commandParts[0].equalsIgnoreCase("neg")) {
-            //TODO neg
+
             //2-complement
             register[firstRegisterNumber] = 0;
 
@@ -283,9 +305,7 @@ public class Moncky2Interpreter {
             return 0;
         }
 
-        if (commandParts[0].startsWith("jp")) {
-            return 0;
-        }
+
         return 0;
     }
 }
