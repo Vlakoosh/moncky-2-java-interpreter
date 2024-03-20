@@ -12,6 +12,12 @@ public class Moncky2Interpreter {
     public ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
 
 
+    public Moncky2Interpreter(String code){
+        commands = code.split("\n");
+    }
+
+    public Moncky2Interpreter(){}
+
     public static void main(String[] args) {
         String codeContent;
         try {
@@ -59,6 +65,11 @@ public class Moncky2Interpreter {
             System.out.println(command);
         }
     }
+
+    public String[] getCommands() {
+        return commands;
+    }
+
 
     public int executeCommand(String command) {
         String[] commandParts = CommandReader.getCommandParts(command);
@@ -297,29 +308,27 @@ public class Moncky2Interpreter {
 
                 return 0;
             }
-            //TODO: check if this is right as I am *NOT* sure
             if (commandParts[0].equalsIgnoreCase("not")) {
                 //1-complement
                 String bitValue = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
-                String reverseBitValue = "";
-                //reverse the bit value of bitValue
-                for (int i = 0; i < bitValue.length(); i++) {
-                    if (bitValue.charAt(i) == '0') reverseBitValue = reverseBitValue + "1";
-                    else reverseBitValue = reverseBitValue + "0";
-                }
+                String reverseBitValue = NumberConverter.invertBinary(bitValue);
 
-                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(reverseBitValue);
+                ALU = (short) NumberConverter.binaryStringToDecimal(reverseBitValue);
+
+                register[firstRegisterNumber] = ALU;
 
                 //add the command to compiler
                 compiledBinaryCommands.add("01001001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
                 return 0;
             }
-            //TODO neg
             if (commandParts[0].equalsIgnoreCase("neg")) {
 
                 //2-complement
-                register[firstRegisterNumber] = 0;
+                String bitValue = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
+                String reverseBitValue = NumberConverter.invertBinary(bitValue);
+                ALU = (short) (NumberConverter.binaryStringToDecimal(reverseBitValue) + 1);
+                register[firstRegisterNumber] = ALU;
 
                 //add the command to compiler
                 compiledBinaryCommands.add("01001010" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));

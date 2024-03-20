@@ -13,6 +13,16 @@ public class NumberConverter {
         return binaryString.substring(binaryString.length() - (len));
     }
 
+    public static String invertBinary(String binaryString) {
+        String reverseBitValue = "";
+        //reverse the bit value of bitValue
+        for (int i = 0; i < binaryString.length(); i++) {
+            if (binaryString.charAt(i) == '0') reverseBitValue = reverseBitValue + "1";
+            else reverseBitValue = reverseBitValue + "0";
+        }
+        return reverseBitValue;
+    }
+
     public static int binaryStringToDecimal(String binaryString) {
         return Integer.parseInt(binaryString, 2);
     }

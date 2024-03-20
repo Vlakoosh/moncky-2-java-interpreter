@@ -19,7 +19,7 @@ public class Moncky2Compiler {
             throw new RuntimeException(e);
         }
 
-        Moncky2Interpreter m2i = new Moncky2Interpreter();
+        Moncky2Interpreter m2i = new Moncky2Interpreter(codeContent);
         Moncky2Compiler m2c = new Moncky2Compiler();
         m2c.compileCode(m2i, codeContent);
         m2c.setCompiledBinaryCommands(m2i.getCompiledBinaryCommands());
@@ -74,7 +74,7 @@ public class Moncky2Compiler {
     }
 
     public void compileCode(Moncky2Interpreter m2i, String moncky2Code) {
-        String[] commands = moncky2Code.split("\n");
+        String[] commands = m2i.getCommands();
 
         int commandLine = 0;
         while (true) {
