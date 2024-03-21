@@ -8,6 +8,11 @@ public class Moncky2Interpreter {
     private short[] register = new short[16];
     private short[] memory = new short[65536];
     private short ALU = 0;
+    private short FLAG_carry = 0;
+    private short FLAG_zero = 0;
+    private short FLAG_sign = 0;
+    private short FLAG_overflow = 0;
+
     private String[] commands;
     public ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
 
@@ -36,12 +41,13 @@ public class Moncky2Interpreter {
 
     public void interpretCode(String moncky2Code) {
         commands = moncky2Code.split("\n");
-        int commandLine = 0;
+        register[15] = 0;
         while (true) {
-            int commandResult = executeCommand(commands[commandLine]);
+            System.out.println("reading code line: " + register[15]);
+            int commandResult = executeCommand(commands[register[15]]);
             if (commandResult < 0) break;
-            if (commandResult > 0) commandLine = commandResult;
-            commandLine++;
+            if (commandResult > 0) register[15] = (short) (commandResult);
+            register[15]++;
         }
     }
 
@@ -97,7 +103,7 @@ public class Moncky2Interpreter {
                 boolean found = false;
                 for (int i = 0; i < commands.length; i ++) {
                     if (commands[i].strip().equals(label)){
-                        immediateValue = (short) (i + 1);
+                        immediateValue = (short) (i);
                         found = true;
                         break;
                     }
@@ -115,7 +121,6 @@ public class Moncky2Interpreter {
             compiledBinaryCommands.add("0001" + NumberConverter.decimalToBinaryString(immediateValue, 8) + NumberConverter.decimalToBinaryString(registerNumber, 4));
             return 0;
         }
-
         if (commandParts[0].equals("ld")) {
             int firstRegisterNumber;
             int secondRegisterNumber;
@@ -156,18 +161,74 @@ public class Moncky2Interpreter {
             //add the command to compiler
             compiledBinaryCommands.add("10100000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
 
-
             return 0;
         }
         if (commandParts[0].equals("jp")) {
-            int registerNumber;
-
-            //check if register number is 1 or 2 digit (0-15)
-            if (commandParts[1].length() == 4) registerNumber = Integer.parseInt(commandParts[1].substring(1, 3));
-            else registerNumber = Integer.parseInt(commandParts[1].substring(1, 2));
+            int registerNumber = getJumpRegisterNumber(commandParts[1]);
+            register[15] = register[registerNumber];
 
             compiledBinaryCommands.add("110000000000" + NumberConverter.decimalToBinaryString(registerNumber, 4));
             return register[registerNumber];
+        }
+        else if (commandParts[0].startsWith("jp")) {
+            //setup for conditional jump
+            int registerNumber;
+            if (commandParts[1].length() == 4)
+                registerNumber = Integer.parseInt(commandParts[1].substring(1, 3));
+            else registerNumber = Integer.parseInt(commandParts[1].substring(1, 2));
+            switch (commandParts[0].substring(2)){
+                case "c":
+                    if (FLAG_carry == (short) 1){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "000" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "nc":
+                    if (FLAG_carry == (short) 0){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "001" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "z":
+                    if (FLAG_zero == (short) 1){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "010" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "nz":
+                    if (FLAG_zero == (short) 0){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "011" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "s":
+                    if (FLAG_sign == (short) 1){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "100" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "ns":
+                    if (FLAG_sign == (short) 0){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "101" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "o":
+                    if (FLAG_overflow == (short) 1){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "110" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                case "no":
+                    if (FLAG_overflow == (short) 0){
+                        register[15] = register[registerNumber];
+                    }
+                    compiledBinaryCommands.add("111100000" + /*flag bits*/ "111" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                    return register[registerNumber];
+                default:
+                    throw new RuntimeException("Invalid flag on conditional jump");
+            }
+
         }
 
 
@@ -339,5 +400,11 @@ public class Moncky2Interpreter {
 
         return 0;
     }//executeCommand
+
+    public int getJumpRegisterNumber(String commandPart) {
+        //check if register number is 1 or 2 digit (0-15)
+        if (commandPart.length() == 4) return Integer.parseInt(commandPart.substring(1, 3));
+        else return Integer.parseInt(commandPart.substring(1, 2));
+    }
 }
 
