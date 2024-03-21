@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class Moncky2Interpreter {
 
-    private short[] register = new short[16];
-    private short[] memory = new short[65536];
+    private final short[] register = new short[16];
+    private final short[] memory = new short[65536];
     private short ALU = 0;
     private short FLAG_carry = 0;
     private short FLAG_zero = 0;
@@ -14,7 +14,7 @@ public class Moncky2Interpreter {
     private short FLAG_overflow = 0;
 
     private String[] commands;
-    public ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
+    public ArrayList<String> compiledBinaryCommands = new ArrayList<>();
 
 
     public Moncky2Interpreter(String code){
@@ -41,9 +41,9 @@ public class Moncky2Interpreter {
 
     public void interpretCode(String moncky2Code) {
         commands = moncky2Code.split("\n");
-        register[15] = 0;
+        ALU = 0;
+        register[15] = ALU;
         while (true) {
-            System.out.println("reading code line: " + register[15]);
             int commandResult = executeCommand(commands[register[15]]);
             if (commandResult < 0) break;
             if (commandResult > 0) register[15] = (short) (commandResult);
@@ -63,12 +63,6 @@ public class Moncky2Interpreter {
             if (memory[i] != 0) {
                 System.out.println("memory at #" + i + ": " + memory[i]);
             }
-        }
-    }
-
-    public void printCompiledBinaryCommands() {
-        for (String command : compiledBinaryCommands) {
-            System.out.println(command);
         }
     }
 
@@ -99,7 +93,6 @@ public class Moncky2Interpreter {
             if (commandParts[2].charAt(0) == ':'){
                 String label = commandParts[2];
                 immediateValue = -1;
-                int commandLine = 0;
                 boolean found = false;
                 for (int i = 0; i < commands.length; i ++) {
                     if (commands[i].strip().equals(label)){
@@ -122,18 +115,9 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equals("ld")) {
-            int firstRegisterNumber;
-            int secondRegisterNumber;
+            int firstRegisterNumber = getMemoryRegister1(commandParts[1]);
+            int secondRegisterNumber = getMemoryRegister2(commandParts[2]);
 
-            //check if register number 1 is 1 or 2 digit (0-15)
-            if (commandParts[1].length() == 4)
-                firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 3));
-            else firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 2));
-
-            //check if register number 2 is 1 or 2 digit (0-15)
-            if (commandParts[2].length() == 5)
-                secondRegisterNumber = Integer.parseInt(commandParts[2].substring(2, 4));//(r00)
-            else secondRegisterNumber = Integer.parseInt(commandParts[2].substring(2, 3));//(r0)
             //store value in RAM
             register[firstRegisterNumber] = memory[register[secondRegisterNumber]];
 
@@ -143,18 +127,9 @@ public class Moncky2Interpreter {
             return 0;
         }
         if (commandParts[0].equals("st")) {
-            int firstRegisterNumber;
-            int secondRegisterNumber;
+            int firstRegisterNumber = getMemoryRegister1(commandParts[1]);
+            int secondRegisterNumber = getMemoryRegister2(commandParts[2]);
 
-            //check if register number 1 is 1 or 2 digit (0-15)
-            if (commandParts[1].length() == 4)
-                firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 3));
-            else firstRegisterNumber = Integer.parseInt(commandParts[1].substring(1, 2));
-
-            //check if register number 2 is 1 or 2 digit (0-15)
-            if (commandParts[2].length() == 5)
-                secondRegisterNumber = Integer.parseInt(commandParts[2].substring(2, 4));//(r00)
-            else secondRegisterNumber = Integer.parseInt(commandParts[2].substring(2, 3));//(r0)
             //store value in RAM
             memory[register[firstRegisterNumber]] = register[secondRegisterNumber];
 
@@ -456,6 +431,20 @@ public class Moncky2Interpreter {
         //check if register number is 1 or 2 digit (0-15)
         if (commandPart.length() == 4) return Integer.parseInt(commandPart.substring(1, 3));
         else return Integer.parseInt(commandPart.substring(1, 2));
+    }
+
+    public int getMemoryRegister1(String commandPart) {
+        //check if register number 1 is 1 or 2 digit (0-15)
+        if (commandPart.length() == 4)
+            return Integer.parseInt(commandPart.substring(1, 3));
+        else return Integer.parseInt(commandPart.substring(1, 2));
+    }
+
+    public int getMemoryRegister2(String commandPart) {
+        //check if register number 2 is 1 or 2 digit (0-15)
+        if (commandPart.length() == 5)
+            return Integer.parseInt(commandPart.substring(2, 4));//(r00)
+        else return Integer.parseInt(commandPart.substring(2, 3));//(r0)
     }
 }
 
