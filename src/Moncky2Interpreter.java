@@ -250,9 +250,13 @@ public class Moncky2Interpreter {
             //ALU OPERATIONS
             if (commandParts[0].equalsIgnoreCase("nop")) {
                 //stupid command that does nothing
-
+                register[firstRegisterNumber] = register[secondRegisterNumber];
                 //save ALU result
                 ALU = 0;
+                FLAG_carry = 0;
+                FLAG_zero = 0;
+                FLAG_sign = 0;
+                FLAG_overflow = 0;
 
                 //add the command to compiler
                 compiledBinaryCommands.add("01000000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -267,6 +271,11 @@ public class Moncky2Interpreter {
 
                 //save ALU result
                 ALU = register[firstRegisterNumber];
+                FLAG_carry = 0;
+                FLAG_zero = 0;
+                FLAG_sign = 0;
+                FLAG_overflow = 0;
+
 
                 //add the command to compiler
                 compiledBinaryCommands.add("01000001" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -275,12 +284,21 @@ public class Moncky2Interpreter {
             }
             if (commandParts[0].equalsIgnoreCase("and")) {
                 //set reg1 to 1 if both registers are true
-                if (register[firstRegisterNumber] == 1 && register[secondRegisterNumber] == 1)
+                if (register[firstRegisterNumber] == 1 && register[secondRegisterNumber] == 1) {
                     register[firstRegisterNumber] = (short) 1;
-                else register[firstRegisterNumber] = (short) 0;
+                    FLAG_zero = 0;
+                }
+
+                else {
+                    register[firstRegisterNumber] = (short) 0;
+                    FLAG_zero = 1;
+                }
 
                 //save ALU result
                 ALU = register[firstRegisterNumber];
+                FLAG_carry = 0;
+                FLAG_sign = 0;
+                FLAG_overflow = 0;
 
                 //add the command to compiler
                 compiledBinaryCommands.add("010000010" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -289,12 +307,20 @@ public class Moncky2Interpreter {
             }
             if (commandParts[0].equalsIgnoreCase("xor")) {
                 //set reg1 to 1 if either register is true, but not both
-                if ((register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) && register[firstRegisterNumber] != register[secondRegisterNumber])
+                if ((register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) && register[firstRegisterNumber] != register[secondRegisterNumber]){
                     register[firstRegisterNumber] = (short) 1;
-                else register[firstRegisterNumber] = (short) 0;
+                    FLAG_zero = 0;
+                }
+                else {
+                    register[firstRegisterNumber] = (short) 0;
+                    FLAG_zero = 1;
+                }
 
                 //save ALU result
                 ALU = register[firstRegisterNumber];
+                FLAG_carry = 0;
+                FLAG_sign = 0;
+                FLAG_overflow = 0;
 
                 //add the command to compiler
                 compiledBinaryCommands.add("01000011" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -304,6 +330,16 @@ public class Moncky2Interpreter {
             if (commandParts[0].equalsIgnoreCase("add")) {
                 //add the 2 register values and store them in the first register
                 ALU = (short) (register[firstRegisterNumber] + register[secondRegisterNumber]);
+                //set flags
+                if ( (register[firstRegisterNumber] + register[secondRegisterNumber]) > Short.MAX_VALUE) { FLAG_overflow = 1; }
+                else FLAG_overflow = 0;
+
+                if (ALU == 0){
+                    FLAG_zero = 1;
+                } else FLAG_zero = 0;
+                FLAG_carry = 0;
+                FLAG_sign = 0;
+
                 register[firstRegisterNumber] = ALU;
 
                 //add the command to compiler
@@ -314,6 +350,21 @@ public class Moncky2Interpreter {
             if (commandParts[0].equalsIgnoreCase("sub")) {
                 //subtract the 2 register values and store them in the first register
                 ALU = (short) (register[firstRegisterNumber] - register[secondRegisterNumber]);
+                if (ALU == 0 ) {
+                    FLAG_zero = 1;
+                }
+                else {
+                    if (register[firstRegisterNumber] > register[secondRegisterNumber]){
+                        FLAG_sign = 0;
+                    }
+                    else {
+                        FLAG_sign = 1;
+                    }
+                    FLAG_zero = 0;
+                }
+                FLAG_carry = 0;
+                FLAG_overflow = 0;
+
                 register[firstRegisterNumber] = ALU;
 
                 //add the command to compiler
