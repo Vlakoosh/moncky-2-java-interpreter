@@ -10,6 +10,7 @@ User can either compile assembly code into a hex file that can be read by the mo
 - place "code.txt" in "moncky2in" folder with assembly source code
 - run "Moncky2Compiler.java"
 - a new file will be created in "moncky2out" directory under the name "compiledCode.hex"
+- this .hex file can be put into the memory of the moncky-2 processor, either physical or digital, and ran (link to digital files below)
 
 #### simulation/interpreter
 - place "code.txt" in "moncky2in" folder with assembly source code
