@@ -20,7 +20,7 @@ User can either compile assembly code into a hex file that can be read by the mo
 
 ## Acknowledgements
 
- - [Digital Files for Moncky-2 processor](hhttps://gitlab.com/big-bat/moncky/-/tree/master/Moncky2_digital)
+ - [Digital Files for Moncky-2 processor](https://gitlab.com/big-bat/moncky/-/tree/master/Moncky2_digital)
  - [Software to run digital processor](https://github.com/hneemann/Digital)
 
 
