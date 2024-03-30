@@ -19,7 +19,9 @@ public class Moncky2Interpreter {
 
 
     public Moncky2Interpreter(String code){
-        commands = code.split("\n");
+        commandsWithLabels = code.split("\n");
+        commandsWithLabels = stripEmptyCommands(commandsWithLabels);
+        commands = removeLabelsAndComments(commandsWithLabels);
     }
 
     public Moncky2Interpreter(){}
