@@ -104,9 +104,13 @@ public class Moncky2Interpreter {
                 if (!found) {
                     throw new RuntimeException("label not found in code");
                 }
-            }
-            else {
+            } else if (commandParts[2].startsWith("0x")) {
+                immediateValue = (short) NumberConverter.hexStringToDecimal(commandParts[2].substring(2));
+            } else {
                 immediateValue = Short.parseShort(commandParts[2]);
+                if (immediateValue > 255){
+                    throw new RuntimeException("number loaded into register r" + registerNumber + " is too great. Consider using a bit shift instead");
+                }
             }
 
             register[registerNumber] = immediateValue;

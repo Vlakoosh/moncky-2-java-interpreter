@@ -12,6 +12,9 @@ public class NumberConverter {
         //return only the needed amount of bits. Cut off the rest
         return binaryString.substring(binaryString.length() - (len));
     }
+    public static int hexStringToDecimal (String hexString){
+        return Integer.parseInt(hexString, 16);
+    }
 
     public static String invertBinary(String binaryString) {
         String reverseBitValue = "";

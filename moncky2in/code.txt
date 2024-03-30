@@ -1,19 +1,2 @@
-li r1, :loop
-li r2, :label
-
-
-:label
-
-:checkpoint
-
-jp r1
-
-:loop
-
-
-li r3, :checkpoint
-
-
-
-
+li r1, 0x14
 halt
