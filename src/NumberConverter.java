@@ -1,12 +1,12 @@
 public class NumberConverter {
     public static String decimalToBinaryString(int decimalNumber, int len) {
-        String binaryString = Integer.toBinaryString(decimalNumber);
+        StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(decimalNumber));
 
         //if binary number is too short, add leading zeros
         if (binaryString.length() < len) {
             int lenDif = len - binaryString.length();
             for (int i = 0; i < lenDif; i++) {
-                binaryString = "0" + binaryString;
+                binaryString.insert(0, "0");
             }
         }
         //return only the needed amount of bits. Cut off the rest
@@ -17,13 +17,13 @@ public class NumberConverter {
     }
 
     public static String invertBinary(String binaryString) {
-        String reverseBitValue = "";
+        StringBuilder reverseBitValue = new StringBuilder();
         //reverse the bit value of bitValue
         for (int i = 0; i < binaryString.length(); i++) {
-            if (binaryString.charAt(i) == '0') reverseBitValue = reverseBitValue + "1";
-            else reverseBitValue = reverseBitValue + "0";
+            if (binaryString.charAt(i) == '0') reverseBitValue.append("1");
+            else reverseBitValue.append("0");
         }
-        return reverseBitValue;
+        return reverseBitValue.toString();
     }
 
     public static int binaryStringToDecimal(String binaryString) {
