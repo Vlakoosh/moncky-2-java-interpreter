@@ -239,10 +239,17 @@ public class Moncky2Interpreter {
                 return 0;
             }
             if (commandParts[0].equalsIgnoreCase("or")) {
-                //set reg1 to 1 if either register is true
-                if (register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1)
-                    register[firstRegisterNumber] = (short) 1;
-                else register[firstRegisterNumber] = (short) 0;
+                //or operation on every bit of the number inside the register
+                String reg1 = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
+                String reg2 = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
+                StringBuilder ALUResult = new StringBuilder();
+
+                for (int i = 0; i < 16; i++){
+                    if (reg1.charAt(i) == '1' || reg2.charAt(i) == '1') ALUResult.append("1");
+                    else ALUResult.append("0");
+                }
+
+                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(ALUResult.toString());
 
                 //save ALU result
                 ALU = register[firstRegisterNumber];
@@ -258,16 +265,18 @@ public class Moncky2Interpreter {
                 return 0;
             }
             if (commandParts[0].equalsIgnoreCase("and")) {
-                //set reg1 to 1 if both registers are true
-                if (register[firstRegisterNumber] == 1 && register[secondRegisterNumber] == 1) {
-                    register[firstRegisterNumber] = (short) 1;
-                    FLAG_zero = 0;
+                //and operation on every bit of the number inside the register
+                String reg1 = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
+                String reg2 = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
+                StringBuilder ALUResult = new StringBuilder();
+
+                for (int i = 0; i < 16; i++){
+                    if (reg1.charAt(i) == '1' && reg2.charAt(i) == '1') ALUResult.append("1");
+                    else ALUResult.append("0");
                 }
 
-                else {
-                    register[firstRegisterNumber] = (short) 0;
-                    FLAG_zero = 1;
-                }
+                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(ALUResult.toString());
+
 
                 //save ALU result
                 ALU = register[firstRegisterNumber];
@@ -281,15 +290,18 @@ public class Moncky2Interpreter {
                 return 0;
             }
             if (commandParts[0].equalsIgnoreCase("xor")) {
-                //set reg1 to 1 if either register is true, but not both
-                if ((register[firstRegisterNumber] == 1 || register[secondRegisterNumber] == 1) && register[firstRegisterNumber] != register[secondRegisterNumber]){
-                    register[firstRegisterNumber] = (short) 1;
-                    FLAG_zero = 0;
+                //xor operation on every bit of the number inside the register
+                String reg1 = NumberConverter.decimalToBinaryString(register[firstRegisterNumber], 16);
+                String reg2 = NumberConverter.decimalToBinaryString(register[secondRegisterNumber], 16);
+                StringBuilder ALUResult = new StringBuilder();
+
+                for (int i = 0; i < 16; i++){
+                    if ((reg1.charAt(i) == '1' || reg2.charAt(i) == '1') && (reg1.charAt(i) != reg2.charAt(i))) ALUResult.append("1");
+                    else ALUResult.append("0");
                 }
-                else {
-                    register[firstRegisterNumber] = (short) 0;
-                    FLAG_zero = 1;
-                }
+
+                register[firstRegisterNumber] = (short) NumberConverter.binaryStringToDecimal(ALUResult.toString());
+
 
                 //save ALU result
                 ALU = register[firstRegisterNumber];
