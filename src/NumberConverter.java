@@ -1,12 +1,12 @@
 public class NumberConverter {
     public static String decimalToBinaryString(int decimalNumber, int len) {
-        StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(decimalNumber));
+        String binaryString = Integer.toBinaryString(decimalNumber);
 
         //if binary number is too short, add leading zeros
         if (binaryString.length() < len) {
             int lenDif = len - binaryString.length();
             for (int i = 0; i < lenDif; i++) {
-                binaryString.insert(0, "0");
+                binaryString = "0" + binaryString;
             }
         }
         //return only the needed amount of bits. Cut off the rest

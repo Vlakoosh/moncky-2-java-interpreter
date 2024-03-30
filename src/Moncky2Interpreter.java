@@ -3,6 +3,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+//TODO fix label support. Labels should not be counted as a line of code or instruction
+
 public class Moncky2Interpreter {
 
     private final short[] register = new short[16];
@@ -43,8 +45,9 @@ public class Moncky2Interpreter {
     public void interpretCode(String moncky2Code) {
         commands = moncky2Code.split("\n");
         ALU = 0;
-        register[15] = ALU;
+        register[15] = 0;
         while (true) {
+            System.out.println(register[15]);
             int commandResult = executeCommand(commands[register[15]]);
             if (commandResult < 0) break;
             if (commandResult > 0) register[15] = (short) (commandResult);
@@ -80,7 +83,6 @@ public class Moncky2Interpreter {
             compiledBinaryCommands.add("0000000000000000");
             return -1;
         }
-
         //load immediate command (li r, i)
         if (commandParts[0].equals("li")) {
             int registerNumber;
@@ -152,10 +154,7 @@ public class Moncky2Interpreter {
         }
         else if (commandParts[0].startsWith("jp")) {
             //setup for conditional jump
-            int registerNumber;
-            if (commandParts[1].length() == 4)
-                registerNumber = Integer.parseInt(commandParts[1].substring(1, 3));
-            else registerNumber = Integer.parseInt(commandParts[1].substring(1, 2));
+            int registerNumber = getJumpRegisterNumber(commandParts[1]);
             switch (commandParts[0].substring(2)){
                 case "c":
                     if (FLAG_carry == (short) 1){
@@ -211,8 +210,7 @@ public class Moncky2Interpreter {
 
         }
 
-
-        if (commandParts.length > 1 && !commandParts[0].startsWith(";")) {
+        else if (commandParts.length > 1 && commandParts[0].charAt(0) !=';' && !commandParts[0].startsWith("li")) {
             //SETUP FOR ALU OPERATIONS
             int firstRegisterNumber;
             int secondRegisterNumber;
@@ -346,7 +344,7 @@ public class Moncky2Interpreter {
                     FLAG_zero = 1;
                 }
                 else {
-                    if (register[firstRegisterNumber] > register[secondRegisterNumber]){
+                    if (ALU > 0){
                         FLAG_sign = 0;
                     }
                     else {
@@ -446,8 +444,7 @@ public class Moncky2Interpreter {
 
     public int getJumpRegisterNumber(String commandPart) {
         //check if register number is 1 or 2 digit (0-15)
-        if (commandPart.length() == 4) return Integer.parseInt(commandPart.substring(1, 3));
-        else return Integer.parseInt(commandPart.substring(1, 2));
+        return Short.parseShort(commandPart.substring(1));
     }
 
     public int getMemoryRegister1(String commandPart) {

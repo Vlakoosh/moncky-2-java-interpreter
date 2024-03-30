@@ -11,8 +11,33 @@ li r1, 10
 st r1, (r0)
 
 ;if statement
+li r10, :endif
+li r11, :else
+li r0, 10
+ld r1, (r0)
+li r0, 11
+ld r2, (r0)
+
+sub r1, r2
+jps r11
+
+li r0, 10
+ld r1, (r0)
+li r0, 11
+ld r2, (r0)
+sub r1, r2
+li r0, 10
+st r1, (r0)
+jp r10
 
 :else
+li r0, 10
+ld r1, (r0)
+li r0, 11
+ld r2, (r0)
+add r1, r2
+li r0, 10
+st r1, (r0)
 
 :endif
 halt
