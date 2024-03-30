@@ -37,6 +37,7 @@ public class Moncky2Interpreter {
         Moncky2Interpreter m2i = new Moncky2Interpreter();
         m2i.interpretCode(codeContent);
         m2i.printCPU();
+
     }
 
     public void interpretCode(String moncky2Code) {
@@ -135,7 +136,7 @@ public class Moncky2Interpreter {
             int secondRegisterNumber = getMemoryRegister2(commandParts[2]);
 
             //store value in RAM
-            memory[register[firstRegisterNumber]] = register[secondRegisterNumber];
+            memory[register[secondRegisterNumber]] = register[firstRegisterNumber];
 
             //add the command to compiler
             compiledBinaryCommands.add("10100000" + NumberConverter.decimalToBinaryString(firstRegisterNumber, 4) + NumberConverter.decimalToBinaryString(secondRegisterNumber, 4));
@@ -211,7 +212,7 @@ public class Moncky2Interpreter {
         }
 
 
-        if (commandParts.length > 1) {
+        if (commandParts.length > 1 && !commandParts[0].startsWith(";")) {
             //SETUP FOR ALU OPERATIONS
             int firstRegisterNumber;
             int secondRegisterNumber;
