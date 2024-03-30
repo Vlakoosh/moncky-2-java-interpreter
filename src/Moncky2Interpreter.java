@@ -3,8 +3,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-//TODO fix label support. Labels should not be counted as a line of code or instruction
-
 public class Moncky2Interpreter {
 
     private final short[] register = new short[16];
@@ -16,6 +14,7 @@ public class Moncky2Interpreter {
     private short FLAG_overflow = 0;
 
     private String[] commands;
+    private String[] commandsWithLabels;
     public ArrayList<String> compiledBinaryCommands = new ArrayList<>();
 
 
@@ -43,16 +42,49 @@ public class Moncky2Interpreter {
     }
 
     public void interpretCode(String moncky2Code) {
-        commands = moncky2Code.split("\n");
+        commandsWithLabels = moncky2Code.split("\n");
+        commandsWithLabels = stripEmptyCommands(commandsWithLabels);
+        commands = removeLabelsAndComments(commandsWithLabels);
         ALU = 0;
         register[15] = 0;
         while (true) {
-            System.out.println(register[15]);
             int commandResult = executeCommand(commands[register[15]]);
             if (commandResult < 0) break;
             if (commandResult > 0) register[15] = (short) (commandResult);
             register[15]++;
         }
+    }
+
+    public static String[] removeLabelsAndComments(String[] rawCommands){
+        ArrayList<String> commandsList = new ArrayList<String>();
+        for (String command : rawCommands) {
+            command = command.strip();
+            if (!command.startsWith(":") && !command.startsWith(";") && !command.isEmpty()){
+                commandsList.add(command);
+            }
+        }
+        //convert ArrayList back to array
+        String[] commands = new String[commandsList.size()];
+        for (int i = 0; i < commands.length; i++) {
+            commands[i] = commandsList.get(i);
+        }
+        return commands;
+    }
+
+    public static String[] stripEmptyCommands(String[] rawCommands){
+        ArrayList<String> commandsList = new ArrayList<String>();
+        for (String command : rawCommands) {
+            command = command.strip();
+            if (!command.isEmpty()){
+                commandsList.add(command);
+            }
+        }
+        //convert ArrayList back to array
+        String[] commands = new String[commandsList.size()];
+        for (int i = 0; i < commands.length; i++) {
+            commands[i] = commandsList.get(i);
+        }
+        return commands;
     }
 
     public ArrayList<String> getCompiledBinaryCommands() {
@@ -96,10 +128,14 @@ public class Moncky2Interpreter {
             if (commandParts[2].charAt(0) == ':'){
                 String label = commandParts[2];
                 immediateValue = -1;
+                int count = 0;
                 boolean found = false;
-                for (int i = 0; i < commands.length; i ++) {
-                    if (commands[i].strip().equals(label)){
-                        immediateValue = (short) (i);
+                for (String commandWithLabel : commandsWithLabels) {
+                    if (!commandWithLabel.strip().startsWith(":") && !commandWithLabel.strip().startsWith(";")) {
+                        count++;
+                    }
+                    if (commandWithLabel.strip().equals(label)) {
+                        immediateValue = (short) (count-1);
                         found = true;
                         break;
                     }
