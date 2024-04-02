@@ -27,7 +27,7 @@ public class Moncky2Interpreter {
     /**
      * constructor with code parameter
      * sets the commandsWithLabels and commands attributes
-     * @param code
+     * @param code raw code text from source code file
      */
     public Moncky2Interpreter(String code){
         commandsWithLabels = code.split("\n");
@@ -98,7 +98,7 @@ public class Moncky2Interpreter {
      * @return - list of instructions Strings without empty lines, comments, and labels
      */
     public static String[] removeLabelsAndComments(String[] rawCommands){
-        ArrayList<String> commandsList = new ArrayList<String>();
+        ArrayList<String> commandsList = new ArrayList<>();
         for (String command : rawCommands) {
             command = command.strip();
             if (!command.startsWith(":") && !command.startsWith(";") && !command.isEmpty()){
@@ -119,7 +119,7 @@ public class Moncky2Interpreter {
      * @return - list of instructions Strings without empty lines
      */
     public static String[] stripEmptyCommands(String[] rawCommands){
-        ArrayList<String> commandsList = new ArrayList<String>();
+        ArrayList<String> commandsList = new ArrayList<>();
         for (String command : rawCommands) {
             command = command.strip();
             if (!command.isEmpty()){
@@ -482,7 +482,6 @@ public class Moncky2Interpreter {
 
                 return 0;
             }
-            //TODO check this weird for loop
             if (commandParts[0].equalsIgnoreCase("shl")) {
                 //shift all bits left by a specified number of bits
                 //the right-most (low-order) bit is turned into a 0
@@ -499,7 +498,6 @@ public class Moncky2Interpreter {
 
                 return 0;
             }
-            //TODO check this weird for loop
             if (commandParts[0].equalsIgnoreCase("shr")) {
                 //shift all bits right by a specified number of bits
                 //the right-most (low-order) bit is discarded
@@ -516,7 +514,6 @@ public class Moncky2Interpreter {
 
                 return 0;
             }
-            //TODO check this weird for loop
             if (commandParts[0].equalsIgnoreCase("ashr")) {
                 //shift all bits right by a specified number of bits (and keep the sign bit)
                 //the right-most (low-order) bit is discarded
