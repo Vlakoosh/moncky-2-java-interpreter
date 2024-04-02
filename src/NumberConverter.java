@@ -16,6 +16,10 @@ public class NumberConverter {
         return Integer.parseInt(hexString, 16);
     }
 
+    public static int octalStringToDecimal (String hexString){
+        return Integer.parseInt(hexString, 8);
+    }
+
     public static String invertBinary(String binaryString) {
         StringBuilder reverseBitValue = new StringBuilder();
         //reverse the bit value of bitValue

@@ -204,6 +204,12 @@ public class Moncky2Interpreter {
             } else if (commandParts[2].startsWith("0x")) {
                 //load hex value
                 immediateValue = (short) NumberConverter.hexStringToDecimal(commandParts[2].substring(2));
+            } else if (commandParts[2].startsWith("0b")) {
+                //load binary value
+                immediateValue = (short) NumberConverter.binaryStringToDecimal(commandParts[2].substring(2));
+            } else if (commandParts[2].startsWith("0o")) {
+                //load octal value
+                immediateValue = (short) NumberConverter.octalStringToDecimal(commandParts[2].substring(2));
             } else {
                 //load decimal value
                 immediateValue = Short.parseShort(commandParts[2]);
