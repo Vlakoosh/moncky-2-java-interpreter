@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Moncky2Interpreter {
 
@@ -85,10 +86,14 @@ public class Moncky2Interpreter {
         //jump commands/instructions return positive numbers, which will update the current code line that's executed
         //all other commands/instructions return 0, which leads to the next command to be read as normal
         while (true) {
+            System.out.println(register[15] + 1);
             int commandResult = executeCommand(commands[register[15]]);
             if (commandResult < 0) break;
             if (commandResult > 0) register[15] = (short) (commandResult);
             register[15]++; //register 15 stores the current command executed
+            printCPU();
+            System.out.println(ALU);
+            System.out.println(FLAG_sign);
         }
     }
 
@@ -119,10 +124,26 @@ public class Moncky2Interpreter {
      * @return - list of instructions Strings without empty lines
      */
     public static String[] stripEmptyCommands(String[] rawCommands){
+        rawCommands = stripComments(rawCommands);
         ArrayList<String> commandsList = new ArrayList<>();
         for (String command : rawCommands) {
             command = command.strip();
             if (!command.isEmpty()){
+                commandsList.add(command);
+            }
+        }
+        //convert ArrayList back to array
+        String[] commands = new String[commandsList.size()];
+        for (int i = 0; i < commands.length; i++) {
+            commands[i] = commandsList.get(i);
+        }
+        return commands;
+    }
+    public static String[] stripComments(String[] rawCommands){
+        ArrayList<String> commandsList = new ArrayList<>();
+        for (String command : rawCommands) {
+            command = command.strip();
+            if (!command.startsWith(";")){
                 commandsList.add(command);
             }
         }
@@ -273,55 +294,63 @@ public class Moncky2Interpreter {
                 //carry flag
                 case "c":
                     if (FLAG_carry == (short) 1){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "000" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "000" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 case "nc":
                     if (FLAG_carry == (short) 0){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "001" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "001" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 //zero flag
                 case "z":
                     if (FLAG_zero == (short) 1){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "010" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "010" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 case "nz":
                     if (FLAG_zero == (short) 0){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "011" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "011" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 //sign flag
                 case "s":
                     if (FLAG_sign == (short) 1){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "100" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "100" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 case "ns":
                     if (FLAG_sign == (short) 0){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "101" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "101" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 //overflow flag
                 case "o":
                     if (FLAG_overflow == (short) 1){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "110" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "110" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 case "no":
                     if (FLAG_overflow == (short) 0){
-                        register[15] = register[registerNumber];
+                        compiledBinaryCommands.add("111100000" + /*flag bits*/ "111" + NumberConverter.decimalToBinaryString(registerNumber, 4));
+                        return register[registerNumber];
                     }
                     compiledBinaryCommands.add("111100000" + /*flag bits*/ "111" + NumberConverter.decimalToBinaryString(registerNumber, 4));
-                    return register[registerNumber];
+                    return 0;
                 //when jp + any other character than previous options
                 default:
                     throw new RuntimeException("Invalid flag on conditional jump");

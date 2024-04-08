@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Moncky2Compiler {
 
-    private ArrayList<String> compiledBinaryCommands = new ArrayList<String>();
+    private ArrayList<String> compiledBinaryCommands = new ArrayList<>();
     public static void main(String[] args) {
         String codeContent;
         try {
