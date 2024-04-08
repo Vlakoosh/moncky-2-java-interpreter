@@ -85,14 +85,10 @@ public class Moncky2Interpreter {
         //jump commands/instructions return positive numbers, which will update the current code line that's executed
         //all other commands/instructions return 0, which leads to the next command to be read as normal
         while (true) {
-            System.out.println(register[15] + 1);
             int commandResult = executeCommand(commands[register[15]]);
             if (commandResult < 0) break;
             if (commandResult > 0) register[15] = (short) (commandResult);
             register[15]++; //register 15 stores the current command executed
-            printCPU();
-            System.out.println(ALU);
-            System.out.println(FLAG_sign);
         }
     }
 
