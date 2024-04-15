@@ -17,6 +17,10 @@ User can either compile assembly code into a hex file that can be read by the mo
 - run "Moncky2Interpreter.java"
 - a new console window will appear and print all final values in the registers and memory
 
+#### linter/syntax checker
+- place "code.txt" in "moncky2in" folder with assembly source code
+- run "Moncky2Linter.java"
+- a new console window will appear and print all errors and warnings related to your code. Use for debugging!
 
 
 ## Acknowledgements
@@ -28,5 +32,5 @@ User can either compile assembly code into a hex file that can be read by the mo
 
 ## Inspiration
 
-- [Kris Demuynck - creator of my infrastructure course book](https://www.linkedin.com/in/krisdemuynck/)
+- [Kris Demuynck - creator of my infrastructure 2 course book](https://www.linkedin.com/in/krisdemuynck/)
 
