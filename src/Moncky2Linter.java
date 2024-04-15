@@ -103,19 +103,22 @@ public class Moncky2Linter {
                     }
                     return;
                 }
-                if (codeLineParts[2].endsWith("0b")){
+                if (codeLineParts[2].startsWith("0b")){
                     short number = (short) NumberConverter.binaryStringToDecimal(codeLineParts[2].substring(2));
                     if (number > 255){
                         System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction is too great. " + ANSI_RED + "value is more than 8 bits" + ANSI_RESET);
                     }
                     return;
                 }
-                if (codeLineParts[2].endsWith("0o")){
+                if (codeLineParts[2].startsWith("0o")){
                     short number = (short) NumberConverter.octalStringToDecimal(codeLineParts[2].substring(2));
                     if (number > 255){
                         System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction is too great. " + ANSI_RED + "value is more than 8 bits" + ANSI_RESET);
                     }
                     return;
+                }
+                if (codeLineParts[2].startsWith(":")){
+                    return; //label found TODO add label search and check
                 }
 
                 short number = Short.parseShort(codeLineParts[2]);
