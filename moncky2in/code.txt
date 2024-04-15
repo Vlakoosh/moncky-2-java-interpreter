@@ -1,3 +1,5 @@
+li r10, 0xFFF
+
 ;save a
 li r055, 10
 li r1 0x0A
@@ -7,6 +9,7 @@ shl r1 r8
 add r17, r23
 st r1, (r0
 
+li r10, :bababooey
 
 ;save b
 li r0, 11
@@ -32,8 +35,8 @@ st r1, (r55)
 jp r10
 
 
-
-
+:else
+:else
 
 :else
 ;else code block

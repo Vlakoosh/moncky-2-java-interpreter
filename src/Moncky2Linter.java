@@ -37,6 +37,30 @@ public class Moncky2Linter {
         }
     }
 
+    /**
+     * this method makes sure that a label exists and does not have duplicates
+     * @param label the String value of a label that the method looks for
+     */
+    public void checkForLabel(String label, int lineNumber) {
+        boolean found = false;
+        for (int i = 0; i < commands.length; i++){
+            if (commands[i].startsWith(":")){
+                if (found){
+                    if (commands[i].strip().equals(label)) {
+                        System.out.println(lineNumber + WARNING_LABEL + " : duplicate label \"" + label + "\" found in the code at line " + (i +1) );
+                    }
+                }
+                if (commands[i].strip().equals(label)) {
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println(lineNumber + ERROR_LABEL + " : label " + label + " not found in code");
+        }
+    }
+
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -45,9 +69,16 @@ public class Moncky2Linter {
     private final String ERROR_VALUE = String.format(": [%sVALUE%s]", ANSI_RED, ANSI_RESET );
     private final String ERROR_ARGUMENT = String.format(": [%sARGUMENT%s]", ANSI_RED, ANSI_RESET );
     private final String ERROR_UNKNOWN = String.format(": [%sUNKNOWN INSTRUCTION%s]", ANSI_RED, ANSI_RESET);
+    private final String ERROR_LABEL = String.format(": [%sMISSING LABEL%s]", ANSI_RED, ANSI_RESET);
+    private final String WARNING_LABEL = String.format(": [%sDUPLICATE LABEL%s]", ANSI_YELLOW, ANSI_RESET);
     private final String WARNING = String.format(": [%sWARNING%s]", ANSI_YELLOW, ANSI_RESET );
     //private final String WARNING_MINOR = String.format(": [%sMINOR WARNING%s]", ANSI_YELLOW, ANSI_RESET );
 
+    /**
+     * this method checks syntax, values, and good practices in assembly code
+     * @param codeLine the String value of a line of code
+     * @param lineNumber the current instruction index
+     */
     public void checkCommand(String codeLine, int lineNumber) {
         String[] codeLineParts = codeLine.trim().split(" ");
 
@@ -118,6 +149,7 @@ public class Moncky2Linter {
                     return;
                 }
                 if (codeLineParts[2].startsWith(":")){
+                    checkForLabel(codeLineParts[2], lineNumber);
                     return; //label found TODO add label search and check
                 }
 
