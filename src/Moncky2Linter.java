@@ -1,12 +1,40 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class Moncky2Linter {
     //TODO add:
     // - count spaces in each line and mark the line as warning if too much whitespace used
     //syntax check all instructions
     public static void main(String[] args) {
         System.out.println(ANSI_RESET); //set console/terminal text color to white
-        String testCommand = "ld r10, r5";
         Moncky2Linter m2l = new Moncky2Linter();
-        m2l.checkCommand(testCommand, 15);
+        m2l.runCheck();
+    }
+
+    private final String[] commands;
+
+    public Moncky2Linter() {
+        String codeContent;
+        try {
+            Path filePath = Path.of("moncky2in/code.txt");
+            codeContent = Files.readString(filePath);
+        }
+        catch (IOException e) {
+            System.out.println("no code file in moncky2in directory (code.txt)");
+            throw new RuntimeException(e);
+        }
+        commands = codeContent.split("\n");
+    }
+
+    public Moncky2Linter(String codeContent){
+        commands = codeContent.split("\n");
+    }
+
+    public void runCheck() {
+        for (int i = 0; i < commands.length; i++){
+            checkCommand(commands[i], i+1);
+        }
     }
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -23,6 +51,7 @@ public class Moncky2Linter {
     public void checkCommand(String codeLine, int lineNumber) {
         String[] codeLineParts = codeLine.trim().split(" ");
 
+        if (codeLineParts[0].isEmpty()) return;
         if (codeLineParts[0].startsWith(";")) { //comment, ignore
             return;
         }
