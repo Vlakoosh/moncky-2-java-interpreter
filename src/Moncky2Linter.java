@@ -4,7 +4,7 @@ public class Moncky2Linter {
     //syntax check all instructions
     public static void main(String[] args) {
         System.out.println(ANSI_RESET); //set console/terminal text color to white
-        String testCommand = "jpc e15";
+        String testCommand = "ld r10, r5";
         Moncky2Linter m2l = new Moncky2Linter();
         m2l.checkCommand(testCommand, 15);
     }
@@ -18,7 +18,7 @@ public class Moncky2Linter {
     private final String ERROR_ARGUMENT = String.format(": [%sARGUMENT%s]", ANSI_RED, ANSI_RESET );
     private final String ERROR_UNKNOWN = String.format(": [%sUNKNOWN INSTRUCTION%s]", ANSI_RED, ANSI_RESET);
     private final String WARNING = String.format(": [%sWARNING%s]", ANSI_YELLOW, ANSI_RESET );
-    private final String WARNING_MINOR = String.format(": [%sMINOR WARNING%s]", ANSI_YELLOW, ANSI_RESET );
+    //private final String WARNING_MINOR = String.format(": [%sMINOR WARNING%s]", ANSI_YELLOW, ANSI_RESET );
 
     public void checkCommand(String codeLine, int lineNumber) {
         String[] codeLineParts = codeLine.trim().split(" ");
@@ -36,6 +36,7 @@ public class Moncky2Linter {
                 }
             }
             catch (IndexOutOfBoundsException ignored) {}
+            return;
         }
         if (codeLineParts[0].equals("li")){ // li rxx, x...
             try {
@@ -64,6 +65,7 @@ public class Moncky2Linter {
             } catch (NumberFormatException ignored){
                 System.out.println(lineNumber + ERROR_VALUE + " : register \"" + codeLineParts[1] + "\" in li instruction does not contain a valid register number");
             }
+            return;
         }
         if (codeLineParts[0].equals("ld") || codeLineParts[0].equals("st")){ // ld rxx, (rxx) // st rxx, (rxx)
             try {
@@ -114,6 +116,7 @@ public class Moncky2Linter {
             } catch (NumberFormatException ignored){
                 System.out.println(lineNumber + ERROR_VALUE + " : second register \"" + codeLineParts[1] + "\" in st/ld instruction does not contain a valid number");
             }
+            return;
         }
         if (codeLineParts[0].equals("jp")){ //jp rxx
             try {
@@ -240,6 +243,9 @@ public class Moncky2Linter {
             } catch (NumberFormatException ignored){
                 System.out.println(lineNumber + ERROR_VALUE + " : second register \"" + codeLineParts[2] + "\" in " + codeLineParts[0] + " instruction does not contain a valid register number");
             }
+            return;
         }
+        System.out.println(lineNumber + ERROR_UNKNOWN + " : unknown command \"" + codeLineParts[0] + "\".");
+
     }
 }
