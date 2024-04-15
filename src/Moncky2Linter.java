@@ -4,8 +4,8 @@ import java.nio.file.Path;
 
 public class Moncky2Linter {
     //TODO add:
-    // - count spaces in each line and mark the line as warning if too much whitespace used
-    //syntax check all instructions
+    // - * extra * count spaces in each line and mark the line as warning if too much whitespace used
+    // - check validity of hex/octal/binary numbers
     public static void main(String[] args) {
         System.out.println(ANSI_RESET); //set console/terminal text color to white
         Moncky2Linter m2l = new Moncky2Linter();
@@ -93,6 +93,39 @@ public class Moncky2Linter {
                 System.out.println(lineNumber + ERROR_ARGUMENT + " : missing first argument in li instruction (register)");
             } catch (NumberFormatException ignored){
                 System.out.println(lineNumber + ERROR_VALUE + " : register \"" + codeLineParts[1] + "\" in li instruction does not contain a valid register number");
+            }
+            //second argument for 'li' instruction
+            try {
+                if (codeLineParts[2].startsWith("0x")){
+                    short number = (short) NumberConverter.hexStringToDecimal(codeLineParts[2].substring(2));
+                    if (number > 255){
+                        System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction is too great. " + ANSI_RED + "value is more than 8 bits" + ANSI_RESET);
+                    }
+                    return;
+                }
+                if (codeLineParts[2].endsWith("0b")){
+                    short number = (short) NumberConverter.binaryStringToDecimal(codeLineParts[2].substring(2));
+                    if (number > 255){
+                        System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction is too great. " + ANSI_RED + "value is more than 8 bits" + ANSI_RESET);
+                    }
+                    return;
+                }
+                if (codeLineParts[2].endsWith("0o")){
+                    short number = (short) NumberConverter.octalStringToDecimal(codeLineParts[2].substring(2));
+                    if (number > 255){
+                        System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction is too great. " + ANSI_RED + "value is more than 8 bits" + ANSI_RESET);
+                    }
+                    return;
+                }
+
+                short number = Short.parseShort(codeLineParts[2]);
+                if (number > 255){
+                    System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction is too great. " + ANSI_RED + "value is more than 8 bits" + ANSI_RESET);
+                }
+            } catch (IndexOutOfBoundsException ignored) {
+                System.out.println(lineNumber + ERROR_ARGUMENT + " : missing second argument in li instruction (immediate value)");
+            } catch (NumberFormatException ignored){
+                System.out.println(lineNumber + ERROR_VALUE + " : value \"" + codeLineParts[2] + "\" in li instruction does not contain a valid number");
             }
             return;
         }

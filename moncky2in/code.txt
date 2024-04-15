@@ -1,7 +1,7 @@
 ;save a
 li r055, 10
 li r1 0x0A
-li r8, 8
+li r8, 833
 li r2, 1
 shl r1 r8
 add r17, r23
@@ -16,7 +16,7 @@ st r1, (r0)
 ;if statement code block
 li r10, :endif
 li r11, :else
-li r15, 10
+li r15, 1000
 ld r1, (r0)
 li r0, 11
 ld r2, r0)
