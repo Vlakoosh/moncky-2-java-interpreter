@@ -7,11 +7,9 @@
 ;r2, r3 - ALU operation on value
 
 li   r10,   0         ;value register
-li   r11,   0x3      ;load left half of number 1023
+li   r11,   0x03      ;load left half of number 1023
 li   r8,    8         ;load 8 for shifting bits in next instruction
 shl  r11,   r8        ;shift left half of number 1023 left by 8 bits
-li   r3,    0xFF
-add  r11,   r3
 li   r1,    1         ;load a 1 for future use
 li   r12,   :loop     ;load the label :loop into r12
 

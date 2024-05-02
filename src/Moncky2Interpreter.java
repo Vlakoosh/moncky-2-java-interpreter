@@ -207,7 +207,7 @@ public class Moncky2Interpreter {
                     if (!commandWithLabel.strip().startsWith(":") && !commandWithLabel.strip().startsWith(";")) {
                         count++;
                     }
-                    if (commandWithLabel.strip().equals(label)) {
+                    if (commandWithLabel.strip().startsWith(label)) {
                         immediateValue = (short) (count-1);
                         found = true;
                         break;

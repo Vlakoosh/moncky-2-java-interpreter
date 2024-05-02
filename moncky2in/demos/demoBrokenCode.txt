@@ -1,0 +1,54 @@
+;paste this into code.txt and run the Moncky2Linter file to see how the linter does its magic
+
+li r10, 0xFFF
+
+;save a
+li r055, 10
+li r1 0x0A
+li r8, 833
+li r2, 1
+shl r1 r8
+add r17, r23
+st r1, (r0
+
+li r10, :missingLabel
+
+;save b
+li r0, 11
+li r1, 10
+st r1, (r0)
+
+;if statement code block
+li r10, :endif
+li r11, :else
+li r15, 1000
+ld r1, (r0)
+li r0, 11
+ld r2, r0)
+sub r15, r2
+jps r15
+li r0, 10
+ld r1, (r0)
+li r0, 11
+ld r2, r0)
+sub r1, r2
+li r0, 10
+st r1, (r55)
+jp r10
+
+
+:else
+:else
+
+:else
+;else code block
+li r0, 10
+ld r1 (r0)
+li r0, 11
+ld r2, (r0)
+add r15, r2
+li r0, 10
+st r1, (r0)
+
+:endif
+halt

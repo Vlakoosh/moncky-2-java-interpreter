@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class Moncky2Linter {
     //TODO add:
@@ -95,8 +96,24 @@ public class Moncky2Linter {
      * @param lineNumber the current instruction index
      */
     public void checkCommand(String codeLine, int lineNumber) {
+
+        if (codeLine.isBlank()) {
+            return;
+        }
+        System.out.println(lineNumber);
+
         //split each instruction into words/parts
-        String[] codeLineParts = codeLine.trim().split(" ");
+        String[] codeLineParts = codeLine.split(" ");
+        ArrayList<String> code = new ArrayList<>();
+        for (String codeLinePart : codeLineParts) {
+            if (!codeLinePart.isEmpty()) {
+                code.add(codeLinePart);
+            }
+        }
+        codeLineParts = new String[code.size()];
+        for (int i = 0; i < codeLineParts.length; i++){
+            codeLineParts[i] = code.get(i);
+        }
 
         //ignore empty lines of code
         if (codeLineParts[0].isEmpty()) return;
@@ -115,6 +132,7 @@ public class Moncky2Linter {
                 //give warning if arguments are used with the halt instruction
                 if (!codeLineParts[1].isEmpty() && !codeLineParts[1].startsWith(";")){
                     System.out.println(lineNumber + ERROR_ARGUMENT + " : unknown argument after halt instruction");
+                    return;
                 }
             }
             catch (IndexOutOfBoundsException ignored) {}
